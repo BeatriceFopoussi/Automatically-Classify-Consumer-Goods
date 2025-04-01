@@ -20,6 +20,138 @@ from tensorflow.keras.utils import load_img, img_to_array
 from matplotlib.image import imread
 from skimage.transform import resize
 
+
+# Score de l'epoch optimal
+
+model_data_gen_all.load_weights(model_data_gen_all_save_path)
+
+loss_train_all, accuracy_train_all = model_data_gen_all.evaluate(train_flow, verbose=False)
+print("Training Accuracy   : {:.4f}".format(accuracy_train_all))
+
+temps1=time.time()
+loss_val_all, accuracy_val_all = model_data_gen_all.evaluate(val_flow, verbose=False)
+print("Validation Accuracy :  {:.4f}".format(accuracy_val_all))
+temps2_val_all = np.round(time.time()-temps1, 2)
+print("Temps de validation : {} secondes".format(temps2_val_all))
+
+temps1=time.time()
+loss_test_all, accuracy_test_all = model_data_gen_all.evaluate(test_flow, verbose=False)
+print("Test Accuracy       :  {:.4f}".format(accuracy_test_all))
+temps2_test_all = np.round(time.time()-temps1, 2)
+print("Temps de validation : {} secondes".format(temps2_test_all))
+# Scores de l'epoch optimal
+
+model_data_zoom.load_weights(model_data_zoom_save_path)
+
+loss_train_zoom, accuracy_train_zoom = model_data_zoom.evaluate(train_flow, verbose=False)
+print("Training Accuracy   : {:.4f}".format(accuracy_train_zoom))
+
+temps1=time.time()
+loss_val_zoom, accuracy_val_zoom = model_data_zoom.evaluate(val_flow, verbose=False)
+print("Validation Accuracy :  {:.4f}".format(accuracy_val_zoom))
+temps2_val_zoom = np.round(time.time()-temps1, 2)
+print("Temps de validation : {} secondes".format(temps2_val_zoom))
+
+temps1=time.time()
+loss_test_zoom, accuracy_test_zoom = model_data_zoom.evaluate(test_flow, verbose=False)
+print("Test Accuracy       :  {:.4f}".format(accuracy_test_zoom))
+temps2_test_zoom = np.round(time.time()-temps1, 2)
+print("Temps de test : {} secondes".format(temps2_test_zoom))
+# Scores de l'epoch optimal
+
+# Score de l'epoch optimal
+
+model_data_shift.load_weights(model_data_shift_save_path)
+
+loss_train_shi, accuracy_train_shi = model_data_shift.evaluate(train_flow, verbose=False)
+print("Training Accuracy   : {:.4f}".format(accuracy_train_shi))
+
+temps1=time.time()
+loss_val_shi, accuracy_val_shi = model_data_shift.evaluate(val_flow, verbose=False)
+print("Validation Accuracy :  {:.4f}".format(accuracy_val_shi))
+temps2_val_shi = np.round(time.time()-temps1, 2)
+print("Temps de validation : {} secondes".format(temps2_val_shi))
+
+temps1=time.time()
+loss_test_shi, accuracy_test_shi = model_data_shift.evaluate(test_flow, verbose=False)
+print("Test Accuracy       :  {:.4f}".format(accuracy_test_shi))
+temps2_test_shi = np.round(time.time()-temps1, 2)
+print("Temps de test : {} secondes".format(temps2_test_shi))
+
+model_data_rot.load_weights(model_data_rot_save_path)
+
+loss_train_rot, accuracy_train_rot = model_data_rot.evaluate(train_flow, verbose=False)
+print("Training Accuracy   : {:.4f}".format(accuracy_train_rot))
+
+temps1=time.time()
+loss_val_rot, accuracy_val_rot = model_data_rot.evaluate(val_flow, verbose=False)
+print("Validation Accuracy :  {:.4f}".format(accuracy_val_rot))
+temps2_val_rot = np.round(time.time()-temps1, 2)
+print("Temps de validation : {} secondes".format(temps2_val_rot))
+
+temps1=time.time()
+loss_test_rot, accuracy_test_rot = model_data_rot.evaluate(test_flow, verbose=False)
+print("Test Accuracy       :  {:.4f}".format(accuracy_test_rot))
+temps2_test_rot = np.round(time.time()-temps1, 2)
+print("Temps de test : {} secondes".format(temps2_test_rot))
+
+
+
+# Traitement des images pour les rendre exploitables par l'algorithme 
+images_np = image_prep_fct(X_train, 'VGG16')
+print(images_np.shape)
+images_np_test = image_prep_fct(X_test,'VGG16')
+print(images_np_test.shape)
+
+# Traitement des images pour les rendre exploitables par l'algorithme 
+images_np = image_prep_fct(X_train, 'VGG16')
+print(images_np.shape)
+images_np_test = image_prep_fct(X_test,'VGG16')
+print(images_np_test.shape)
+
+temps1=time.time()
+
+# k déterminé comme étant la racine carrée du nombre total de descripteurs.
+k = int(round(np.sqrt(len(sift_keypoints_all)),0))
+print("Nombre de clusters estimés : ", k)
+print("Création de",k, "clusters de descripteurs.")
+
+# Clustering
+kmeans = cluster.MiniBatchKMeans(n_clusters=k, init_size=3*k, random_state=0)
+kmeans.fit(sift_keypoints_all)
+
+temps2 = np.round(time.time()-temps1, 2)
+print("Temps de traitement : {} secondes".format(temps2))
+temps1=time.time()
+
+# k déterminé comme étant le nombre de catégorie recherchée fois 10.
+k = len(liste_cat)*10
+print("Nombre de clusters estimés : ", k)
+print("Création de",k, "clusters de descripteurs.")
+
+# Clustering
+kmeans2 = cluster.MiniBatchKMeans(n_clusters=k, init_size=3*k, random_state=0)
+kmeans2.fit(sift_keypoints_all)
+
+temps2 = np.round(time.time()-temps1, 2)
+print("Temps de traitement : {} secondes".format(temps2))
+
+def extract_features_img(df, path, model):
+
+    images_features = []
+
+    for image_num in range(len(df['image'])) :
+        image = load_img(path + df['image'][image_num], target_size=(224, 224))
+        image = img_to_array(image) 
+        image = image.reshape((1, image.shape[0], image.shape[1], image.shape[2]))
+        image = preprocess_input(image)
+        images_features.append(model.predict(image, verbose = 0)[0]) # predict from pretrained model
+
+    images_features = np.asarray(images_features)
+    print(images_features.shape)
+    return images_features
+
+
 ''' Fonctions générales '''
 
 

@@ -1,6 +1,5 @@
 # Automatically Classify Consumer Goods
 
-Classifiez automatiquement des biens de consommation
 ## Project Data Science Problem Statement
 
 On this English-speaking marketplace platform, sellers offer items to buyers by posting a photo and a description. Currently, the assignment of a category to an item is done manually by the sellers, leading to limited reliability. Additionally, the volume of items is still very low.
