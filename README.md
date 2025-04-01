@@ -7,7 +7,7 @@ On this English-speaking marketplace platform, sellers offer items to buyers by 
 To enhance the user experience for sellers (by facilitating the listing of new items) and buyers (by simplifying product searches), and in anticipation of scaling up, it becomes essential to automate this category assignment task.
 
 The mission is to conduct a feasibility study to develop an automatic item classification engine, utilizing both the image and the description of the products in the dataset.
-
+g
 
 The assignment of a category to an item is done manually. 
 - Task Automation 
